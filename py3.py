@@ -29,6 +29,8 @@ def start(file):
         #print(Trame)
         ethernet(Trame)
         http(Trame)
+        #ferme le fichier
+        file.close()
         return Trame
 
 #convertit hexadecimal en decimal 
@@ -121,7 +123,7 @@ def http(Trame):
             print(convertToAscii(convert(Trame[i][j])),end='')
     
 
-start("Trame.txt")
+start(sys.argv[1])
 
 
     
