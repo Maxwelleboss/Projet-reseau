@@ -40,9 +40,12 @@ def convert(a) :
 #retourne le datagramme ipv4 
 def ethernet(Trame):
     print("Ethernet Header")
-    print("Destination MAC: ", Trame[0][0], Trame[0][1], Trame[0][2], Trame[0][3], Trame[0][4], Trame[0][5])
-    print("Source MAC: ", Trame[0][6], Trame[0][7], Trame[0][8], Trame[0][9], Trame[0][10], Trame[0][11])
-    print("Type: ", Trame[0][12], Trame[0][13])
+    edmac = Trame[0][0] + Trame[0][1] + Trame[0][2] + Trame[0][3] + Trame[0][4] + Trame[0][5]
+    print("Destination MAC: ", edmac)
+    esmac = Trame[0][6] + Trame[0][7] + Trame[0][8] + Trame[0][9] + Trame[0][10] + Trame[0][11]
+    print("Source MAC: ", esmac)
+    etype = Trame[0][12] + Trame[0][13]
+    print("Type: ", etype)
     ip = Trame[0][12], Trame[0][13]
     if(ip[1]=='00'):
         print("Type: IP")
@@ -51,50 +54,78 @@ def ethernet(Trame):
 #affiche le datagramme ipv4 
 def ipv4(Trame):
     print("IP Header")
-    print("Version: ", Trame[0][14][0])
-    print("Header Length: ", Trame[0][14][1])
-    print("Type of Service: ", Trame[0][15])
-    print("Total Length: ", convert(Trame[1][0] + Trame[1][1]))
-    print("Identification: ",Trame[1][2], Trame[1][3])
-    print("Flags: ", (Trame[1][4]))
-    print("Fragment Offset: ",Trame[1][5])
-    print("Time to Live: ",convert(Trame[1][6]))
+    ipv = Trame[0][14][0]
+    print("Version: ", ipv)
+    ihl = Trame[0][14][1]
+    print("Header Length: ", ihl)
+    iptos = Trame[0][15]
+    print("Type of Service: ", iptos)
+    iplen = convert(Trame[1][0] + Trame[1][1])
+    print("Total Length: ", iplen)
+    ipid = convert(Trame[1][2] + Trame[1][3])
+    print("Identification: ", ipid)
+    ipflags = Trame[1][4]
+    print("Flags: ", ipflags)
+    ipoffset = Trame[1][5]
+    print("Fragment Offset: ", ipoffset)
+    ipttl = convert(Trame[1][6])
+    print("Time to Live: ",ipttl)
     #lister les differents protocole
-    if (Trame[1][7] == '06'):
+    ipproto = Trame[1][7]
+    if (ipproto == '06'):
         print("Protocol: TCP")
-        print("Header Checksum: ",Trame[1][8], Trame[1][9])
-        print("Source address: ",convert(Trame[1][10]),".",convert(Trame[1][11]),".",convert(Trame[1][12]),".",convert(Trame[1][13]))        
-        print("Destination address",convert(Trame[1][14]),".",convert(Trame[1][15]),".",convert(Trame[2][0]),".",convert(Trame[2][1]))
+        ipcsum = Trame[1][8] + Trame[1][9]
+        print("Header Checksum: ",ipcsum)
+        ipsrc = str(convert(Trame[1][10])) + "." + str(convert(Trame[1][11])) + "." + str(convert(Trame[1][12])) + "." + str(convert(Trame[1][13]))
+        print("Source address: ",ipsrc)        
+        ipdst = str(convert(Trame[1][14])) + "." + str(convert(Trame[1][15])) + "." + str(convert(Trame[2][0])) + "." + str(convert(Trame[2][1]))
+        print("Destination address",ipdst)
         tcp(Trame)
-    elif (Trame[1][7] == '11'):
+    elif (ipproto == '11'):
         print("Protocol: UDP")
-        print("Header Checksum: ",Trame[1][8], Trame[1][9])
-        print("Source address: ",convert(Trame[1][10]),".",convert(Trame[1][11]),".",convert(Trame[1][12]),".",convert(Trame[1][13]))        
-        print("Destination address",convert(Trame[1][14]),".",convert(Trame[1][15]),".",convert(Trame[2][0]),".",convert(Trame[2][1]))
+        ipcsum = Trame[1][8] + Trame[1][9]
+        print("Header Checksum: ",ipcsum)
+        ipsrc = str(convert(Trame[1][10])) + "." + str(convert(Trame[1][11])) + "." + str(convert(Trame[1][12])) + "." + str(convert(Trame[1][13]))
+        print("Source address: ",ipsrc)        
+        ipdst = str(convert(Trame[1][14])) + "." + str(convert(Trame[1][15])) + "." + str(convert(Trame[2][0])) + "." + str(convert(Trame[2][1]))
+        print("Destination address",ipdst)
         udp(Trame)
     else:
-        print("Protocol: ",Trame[1][7])
-        print("Header Checksum: ",Trame[1][8], Trame[1][9])
-        print("Source address: ",convert(Trame[1][10]),".",convert(Trame[1][11]),".",convert(Trame[1][12]),".",convert(Trame[1][13]))        
-        print("Destination address",convert(Trame[1][14]),".",convert(Trame[1][15]),".",convert(Trame[2][0]),".",convert(Trame[2][1]))
+        print("Protocol: ",ipproto)
+        ipcsum = Trame[1][8] + Trame[1][9]
+        print("Header Checksum: ",ipcsum)
+        ipsrc = str(convert(Trame[1][10])) + "." + str(convert(Trame[1][11])) + "." + str(convert(Trame[1][12])) + "." + str(convert(Trame[1][13]))
+        print("Source address: ",ipsrc)        
+        ipdst = str(convert(Trame[1][14])) + "." + str(convert(Trame[1][15])) + "." + str(convert(Trame[2][0])) + "." + str(convert(Trame[2][1]))
+        print("Destination address",ipdst)
 
 
 def udp(Trame):
     print("UDP Header")
-    print("Source Port: ",convert(Trame[2][2] + Trame[2][3]))
-    print("Destination Port: ",convert(Trame[2][4] + Trame[2][5]))
-    print("Length: ",convert(Trame[2][6] + Trame[2][7]))
-    print("Checksum: ",Trame[2][8] + Trame[2][9])
+    udpsrc = convert(Trame[2][2] + Trame[2][3])
+    print("Source Port: ", udpsrc)
+    udpdst = convert(Trame[2][4] + Trame[2][5])
+    print("Destination Port: ",udpdst)
+    udplen = convert(Trame[2][6] + Trame[2][7])
+    print("Length: ",udplen)
+    udpchksum = Trame[2][8] + Trame[2][9]
+    print("Checksum: ", udpchksum)
 
 
 def tcp(Trame):
     print("TCP Header")
-    print("Source Port: ",convert(Trame[2][2] + Trame[2][3]))
-    print("Destination Port: ",convert(Trame[2][4] + Trame[2][5]))
-    print("Sequence Number: ",convert(Trame[2][6] + Trame[2][7] + Trame[2][8] + Trame[2][9]))
-    print("Acknowledgement Number: ",convert(Trame[2][10] + Trame[2][11] + Trame[2][12] + Trame[2][13]))
-    print("Header Length: ",Trame[2][14][0])
-    print("Flags: ",Trame[2][14][1]+Trame[2][15])
+    tcpsrc = convert(Trame[2][2] + Trame[2][3])
+    print("Source Port: ", tcpsrc)
+    tcpdst = convert(Trame[2][4] + Trame[2][5])
+    print("Destination Port: ", tcpdst)
+    tcpseq = convert(Trame[2][6] + Trame[2][7] + Trame[2][8] + Trame[2][9])
+    print("Sequence Number: ", tcpseq)
+    tcpack = convert(Trame[2][10] + Trame[2][11] + Trame[2][12] + Trame[2][13])
+    print("Acknowledgement Number: ", tcpack)
+    tcphl= Trame[2][14][0]
+    print("Header Length: ", tcphl)
+    tcpflags = Trame[2][14][1]
+    print("Flags: ", tcpflags)
     flags = convert(Trame[2][14][1]+Trame[2][15])
     flags = bin(flags)[2:].zfill(12)
     print("Reserved bit: ",flags[0:3])
@@ -107,23 +138,23 @@ def tcp(Trame):
     print("Reset: ",flags[9])
     print("Syn: ",flags[10])
     print("Fin: ",flags[11])
-    print("Window: ",convert(Trame[3][0] + Trame[3][1]))
-    print("Checksum: ",Trame[3][2] + Trame[3][3])
-    print("Urgent Pointer: ",convert(Trame[3][4] + Trame[3][5]))
+    tcpwindow = convert(Trame[3][0] + Trame[3][1])
+    print("Window: ", tcpwindow)
+    tcpchksum = Trame[3][2] + Trame[3][3]
+    print("Checksum: ", tcpchksum)
+    tcpurgptr = convert(Trame[3][4] + Trame[3][5])
+    print("Urgent Pointer: ", tcpurgptr)
     #print("Options: ", Trame[3][6:])
 
-#convert from decimal to ascii
-def convertToAscii(dec):
-    return chr(dec)
 
 def http(Trame):
     print("HTTP Header")
     for i in range (4,len(Trame)):
         for j in range (0,len(Trame[i])):
-            print(convertToAscii(convert(Trame[i][j])),end='')
+            print(chr(convert(Trame[i][j])),end='')
     
 
-start(sys.argv[1])
+start("TRAME.txt")
 
 
     
